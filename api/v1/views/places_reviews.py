@@ -9,7 +9,7 @@ from models.user import User
 from models.place import Place
 
 
-@app_views.route('/reviews', methods=['GET'], strict_slashes=False)
+@app_views.route('api/v1/views/places_reviews.py', methods=['GET'], strict_slashes=False)
 def get_reviews():
     """Retrieves the list of all User objects"""
     reviews = []
@@ -18,7 +18,7 @@ def get_reviews():
     return jsonify(reviews)
 
 
-@app_views.route('/reviews/<reviews_id>', methods=['GET'],
+@app_views.route('/api/v1/places/<place_id>/reviews', methods=['GET'],
                  strict_slashes=False)
 def get_review(reviews_id):
     """Retrieves a User object"""
@@ -58,7 +58,7 @@ def create_reviews(place_id):
     return jsonify(review.to_dict()), 201
 
 
-@app_views.route('/users/<user_id>', methods=['PUT'],
+@app_views.route('/api/v1/reviews/<review_id>', methods=['PUT'],
                  strict_slashes=False)
 def put_user(user_id):
     """Updates a User object"""
