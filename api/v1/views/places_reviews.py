@@ -9,16 +9,20 @@ from models.user import User
 from models.place import Place
 
 
-@app_views.route('api/v1/views/places_reviews.py', methods=['GET'], strict_slashes=False)
-def get_reviews():
+@app_views.route('/api/v1/places/<place_id>/reviews', methods=['GET'], strict_slashes=False)
+def get_reviews(place_id):
     """Retrieves the list of all Review objects"""
-    reviews = []
-    for review in storage.all(Review).values():
-        reviews.append(review.to_dict())
-    return jsonify(reviews)
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+    reviews = place.reviews
+    reviews_list = []
+    for review in reviews:
+        reviews_list.append(review.to_dict())
+    return jsonify(reviews_list)
 
 
-@app_views.route('/api/v1/places/<place_id>/reviews', methods=['GET'],
+@app_views.route('/api/v1/reviews/<review_id>', methods=['GET'],
                  strict_slashes=False)
 def get_review(review_id):
     """Retrieves a Review object"""
@@ -45,12 +49,15 @@ def create_review(place_id):
     """Creates a Review"""
     js_info = request.get_json()
     place = storage.get(Place, place_id)
+    user = storage.get(User, js_info.get("user_id"))
     if not place:
         abort(404)
     if request.is_json is False:
         abort(400, 'Not a JSON')
     if 'user_id' not in js_info:
-        abort(400, 'Missing uer_id')
+        abort(400, 'Missing user_id')
+    if not user:
+        abort(404)
     if 'text' not in js_info:
         abort(400, 'Missing text')
     review = Review(**js_info)
