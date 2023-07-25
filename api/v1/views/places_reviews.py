@@ -49,7 +49,6 @@ def delete_review(review_id):
 def create_review(place_id):
     """Creates an object"""
     js_info = request.get_json()
-    user = storage.get(User, js_info.get("user_id"))
     place = storage.get(Place, place_id)
     if not js_info:
         abort(400, 'Not a JSON')
@@ -57,6 +56,7 @@ def create_review(place_id):
         abort(404)
     if "user_id" not in js_info.keys():
         abort(400, "Missing user_id")
+    user = storage.get(User, js_info.get("user_id"))
     if not user:
         abort(404)
     if "text" not in js_info.keys():
@@ -64,6 +64,7 @@ def create_review(place_id):
 
     js_info["place_id"] = place_id
     new_review = Review(**js_info)
+    new_review.save()
     return jsonify(new_review.to_dict()), 201
 
 
