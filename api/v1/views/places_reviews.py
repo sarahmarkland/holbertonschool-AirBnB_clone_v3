@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""create a new view for User objects that handles all default RestFul API
+"""create a new view for Review objects that handles all default RestFul API
 actions"""
 from api.v1.views import app_views
 from flask import jsonify, abort, request
@@ -11,7 +11,7 @@ from models.place import Place
 
 @app_views.route('api/v1/views/places_reviews.py', methods=['GET'], strict_slashes=False)
 def get_reviews():
-    """Retrieves the list of all User objects"""
+    """Retrieves the list of all Review objects"""
     reviews = []
     for review in storage.all(Review).values():
         reviews.append(review.to_dict())
@@ -20,19 +20,19 @@ def get_reviews():
 
 @app_views.route('/api/v1/places/<place_id>/reviews', methods=['GET'],
                  strict_slashes=False)
-def get_review(reviews_id):
-    """Retrieves a User object"""
-    review = storage.get(Review, reviews_id)
+def get_review(review_id):
+    """Retrieves a Review object"""
+    review = storage.get(Review, review_id)
     if review:
         return jsonify(review.to_dict())
     abort(404)
 
 
-@app_views.route('/reviews/<reviews_id>', methods=['DELETE'],
+@app_views.route('/reviews/<review_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_review(reviews_id):
-    """Deletes a User object"""
-    review = storage.get(Review, reviews_id)
+def delete_review(review_id):
+    """Deletes a Review object"""
+    review = storage.get(Review, review_id)
     if review:
         storage.delete(review)
         storage.save()
@@ -41,15 +41,15 @@ def delete_review(reviews_id):
 
 
 @app_views.route('/api/v1/places/<place_id>/reviews', methods=['POST'], strict_slashes=False)
-def create_reviews(place_id):
-    """Creates a User"""
+def create_review(place_id):
+    """Creates a Review"""
     js_info = request.get_json()
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
     if request.is_json is False:
         abort(400, 'Not a JSON')
-    if 'uer_id' not in js_info:
+    if 'user_id' not in js_info:
         abort(400, 'Missing uer_id')
     if 'text' not in js_info:
         abort(400, 'Missing text')
@@ -60,15 +60,15 @@ def create_reviews(place_id):
 
 @app_views.route('/api/v1/reviews/<review_id>', methods=['PUT'],
                  strict_slashes=False)
-def put_user(user_id):
-    """Updates a User object"""
-    user = storage.get(User, user_id)
-    if user is None:
+def update_reviews(review_id):
+    """Updates a Review object"""
+    review = storage.get(Review, review_id)
+    if review is None:
         abort(404)
     if not request.get_json():
         abort(400, 'Not a JSON')
     for key, value in request.get_json().items():
         if key not in ['id', 'created_at', 'updated_at']:
-            setattr(user, key, value)
+            setattr(review, key, value)
     storage.save()
-    return jsonify(user.to_dict()), 200
+    return jsonify(review.to_dict()), 200
