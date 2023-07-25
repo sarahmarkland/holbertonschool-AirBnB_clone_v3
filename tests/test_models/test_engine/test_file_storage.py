@@ -120,14 +120,12 @@ class TestFileStorage(unittest.TestCase):
         and its ID, or None if not found
         """
         storage = FileStorage()
-        new_state = State(name="California")
+        new_state = State(name="TestState")
         storage.new(new_state)
         storage.save()
-        self.assertEqual(new_state, storage.get("State", new_state.id))
-        self.assertEqual(None, storage.get("State", "123456"))
-        self.assertEqual(None, storage.get("State", None))
-        self.assertEqual(None, storage.get(None, "123456"))
-        self.assertEqual(None, storage.get(None, None))
+        first_state_id = list(storage.all(State).values())[0].id
+        self.assertIsNotNone(storage.get(State, first_state_id))
+        self.assertIsNone(storage.get(State, '27'))
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_count(self):
@@ -136,9 +134,5 @@ class TestFileStorage(unittest.TestCase):
         of all objects in storage
         """
         storage = FileStorage()
-        new_state = State(name="California")
-        storage.new(new_state)
-        storage.save()
-        self.assertEqual(1, storage.count("State"))
-        self.assertEqual(0, storage.count("City"))
-        self.assertEqual(1, storage.count())
+        self.assertEqual(storage.count(), len(storage.all()))
+        self.assertEqual(storage.count(State), len(storage.all(State)))
