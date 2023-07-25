@@ -44,6 +44,7 @@ def delete_place(place_id):
     storage.save()
     return make_response(jsonify({}), 200)
 
+
 @app_views.route('/cities/<city_id>/places', methods=['POST'],
                  strict_slashes=False)
 def post_place(city_id):
