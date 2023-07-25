@@ -13,7 +13,7 @@ from models.user import User
                  strict_slashes=False)
 def get_places(city_id):
     """Retrieves the list of all Place objects of a City"""
-    city = storage.get("City", city_id)
+    city = storage.get(City, city_id)
     if city is None:
         abort(404)
     else:
@@ -26,7 +26,7 @@ def get_places(city_id):
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_place(place_id):
     """Retrieves a Place object"""
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if place is None:
         abort(404)
     else:
@@ -37,7 +37,7 @@ def get_place(place_id):
                  strict_slashes=False)
 def delete_place(place_id):
     """Deletes a Place object"""
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if place is None:
         abort(404)
     storage.delete(place)
@@ -48,7 +48,7 @@ def delete_place(place_id):
                  strict_slashes=False)
 def post_place(city_id):
     """Creates a Place"""
-    city = storage.get("City", city_id)
+    city = storage.get(City, city_id)
     if city is None:
         abort(404)
     placeList = request.get_json()
@@ -58,7 +58,7 @@ def post_place(city_id):
         return make_response(jsonify({"error": "Missing user_id"}), 400)
     if "name" not in request.get_json():
         return make_response(jsonify({"error": "Missing name"}), 400)
-    user = storage.get("User", placeList["user_id"])
+    user = storage.get(User, placeList["user_id"])
     if user is None:
         abort(404)
     else:
@@ -70,7 +70,7 @@ def post_place(city_id):
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
 def put_place(place_id):
     """Updates a Place object"""
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if place is None:
         abort(404)
     if not request.get_json():
